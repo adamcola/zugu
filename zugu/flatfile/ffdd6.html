@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<title>Flat File Database Demo 6</title>
+
+<link rel="stylesheet" href="ffdd6.css" type="text/css" media="screen, projection" title="Default">
+
+</head>
+
+<body>
+
+<h1>Flat File Database Demo 6</h1>
+
+<form id="theForm" method="post" action="ffdd6-2.php">
+<fieldset>
+
+<legend><strong>Search for the name of one of my demos.</strong>
+<br>Try words like 'demo', 'opera', 'firefox' etc.
+
+<ul>
+<li>Lowercase or part words are okay (eg: 'fox').</li>
+<li>Up to two separate words can be entered separated by a space (eg: 'demo opera').</li>
+<li>For two words that must be on the same database line enter "AND" between them (eg: 'demo AND opera').</li>
+<li>For an exact phrase of two words or more enclose it in speech marks (eg: "opera dotted").</li>
+</ul></legend>
+
+<br><input type="text" name="search" id="search" size="20" maxlength="50">&nbsp;<input type="submit" name="searchbutton" id="searchbutton" value="Go">
+</fieldset>
+</form>
+
+<p>
+<br>By <a href="http://www.designdetector.com">Chris Hester</a> 7th February 2012 | Updated: <?php echo date('jS F Y', getlastmod()); ?> | <a href="http://www.designdetector.com/2012/02/flat-file-database-demo-6.php">About The Demo</a> | <a href="http://www.designdetector.com/2012/02/flat-file-database-demo-6.php#comments">Comments</a></p>
+
+<p>
+<br><strong>View the code:</strong> <a href="ffdd6.txt">This Page</a> | <a href="ffdd6-2-php.txt">Results Page</a> | <a href="../databases/demos.txt">Database</a> | <a href="ffdd6.css">CSS</a>
+<br><em><strong>Note:</strong> you will need both this page and the results page to make the demo work!</em></p>
+
+</body>
+</html>

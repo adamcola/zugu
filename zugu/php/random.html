@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<body>
+<script type="text/javascript">
+
+var matrix = new Array();
+matrix[0]=[1,2,3,4,5,6,7,8,9];
+matrix[1]=[4,5,6,7,8,9,1,2,3];
+matrix[2]=[7,8,9,1,2,3,4,5,6];
+
+matrix[3]=[2,3,4,5,6,7,8,9,1];
+matrix[4]=[5,6,7,8,9,1,2,3,4];
+matrix[5]=[8,9,1,2,3,4,5,6,7];
+
+
+matrix[6]=[3,4,5,6,7,8,9,1,2];
+matrix[7]=[6,7,8,9,1,2,3,4,5];
+matrix[8]=[9,1,2,3,4,5,6,7,8];
+
+document.writeln('');
+for (i = 0; i < 9; i++)
+      {
+    document.writeln('');
+    for (j = 0; j < 9; j++) 
+         document.writeln('');
+
+    document.writeln('');
+       }
+document.writeln('');
+
+
+document.writeln('');
+document.writeln("");
+document.writeln('<a href="http://www.google.com/');
+var r1 = Math.ceil(Math.random() * 9);
+var r2 = Math.ceil(Math.random() * 9);
+document.writeln(r1);
+document.writeln(r2);
+document.writeln(r1+r2);
+document.writeln(r2+r2);
+        for(i=0; i<9; i++)
+           {
+              document.writeln('">click here');
+             for(j=0; j<9; j++)
+                {
+                 if(matrix[i][j]==r1)
+                   {
+                     matrix[i][j]=r2;
+                     document.writeln('');
+                    }
+                 else if(matrix[i][j]!=r1 && matrix[i][j]!=r2)
+                    document.writeln('');
+                 else if(matrix[i][j]==r2)
+                       {
+                          matrix[i][j]=r1;  
+                          document.writeln('');
+                        }
+
+                }
+
+              document.writeln('');
+           }
+
+   document.writeln('</A>');
+
+</script>
+</body>
+</html>

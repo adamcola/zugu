@@ -1,0 +1,518 @@
+<html>
+<head>
+<script type='text/javascript' src='rightclick2/js/jquery.js'></script>
+<script type='text/javascript' src='rightclick2/js/common.js'></script>
+<script type='text/javascript' src='rightclick2/js/custom_jquery.js'></script>
+<script type='text/javascript' src='rightclick2/js/smartPopup.js'></script>
+<script type='text/javascript'>
+$(document).ready(function(){
+//get_coordinate();
+	//$(".wrapper").iconSelectable({box:"box_drag",icon:".icon"});
+	$(".wrapper").smartPopup({
+		config:{
+			file_folder:true,
+			file:true,
+			folder:true,
+			wall:true
+			},
+		file_folder:{
+			instant_class:"icon",
+			selected_class:"selected",
+			on_context:"make_selected",
+			config:{
+				admin:true,
+				normal:true,
+				trash:false
+			},			
+			
+			menu:{
+				normal:[
+					
+					{
+						id:"copy_command",
+						text:"Copy",
+						method:"copy",
+						image_url:"images/copy.png",
+						has_extend:false
+						
+					},
+					{
+						id:"cut_command",
+						text:"Cut",
+						method:"cut",
+						image_url:"images/move.png",
+						has_extend:false,
+						short_cut:"Ctrl + X"
+						
+					},
+					
+					{
+						id:"rename_command",
+						text:"Rename",
+						method:"rename",
+						image_url:"images/rename.png",
+						has_extend:false,
+						short_cut:"F2"
+						
+					},
+					{
+						id:"trash_command",
+						text:"Trash",
+						method:"trash",
+						image_url:"images/trash.png",
+						has_extend:false,
+						short_cut:"Del"						
+					},
+					
+					{
+						id:"share_command",
+						text:"Share",
+						method:"share",
+						image_url:"images/public.png",
+						has_extend:false,
+						short_cut:"F3",
+						has_pre_bar:true
+					},
+					{
+						id:"properties_command",
+						text:"Properties",
+						method:"properties",
+						image_url:"images/edit.png",
+						has_extend:false,
+						short_cut:"F4"
+						
+					},
+				],
+				trash:[
+					
+					{
+						id:"restore_command",
+						text:"Restore",
+						method:"restore",
+						image_url:"images/recover.png",
+						has_extend:false,
+						short_cut:"Ctrl+R"
+						
+					},
+					{
+						id:"cut_command",
+						text:"Cut",
+						method:"cut",
+						image_url:"images/move.png",
+						has_extend:false,
+						short_cut:"Ctrl + X"
+						
+					},
+					
+					{
+						id:"properties_command",
+						text:"Properties",
+						method:"properties",
+						image_url:"images/edit.png",
+						has_extend:false,
+						short_cut:"F4"
+						
+					}
+				],
+				admin:[
+					{
+						id:"delete_command",
+						text:"Delete",
+						method:"delete",
+						image_url:"images/delete.png",
+						has_extend:false,
+						short_cut:"Sht + Del"
+						
+					}
+					
+				]
+								
+			}
+			
+		},
+		file:{
+			instant_class:"file",
+			on_context:"",
+			config:{
+				normal:true				
+			},
+			menu:{
+				normal:[
+					{
+						id:"download_command",
+						text:"Download",
+						method:"download",
+						image_url:"images/download.png",
+						has_extend:false,
+						short_cut:"Ctrl+D"
+						
+					}
+					
+				]
+			}
+		},
+		folder:{
+			instant_class:"folder",
+			on_context:"",
+			config:{
+				normal:true				
+			},
+			menu:{
+				normal:[
+					{
+						id:"paste_command",
+						text:"Paste",
+						method:"paste",
+						image_url:"images/paste.png",
+						has_extend:false,
+						short_cut:"Ctrl+V"
+						
+					}
+				]
+			}
+		},
+		wall:{
+			instant_class:unDot($(this).selector),
+			on_context:"",
+			config:{
+				normal:true
+			},
+			menu:{
+				normal:[
+					
+					{
+						id:"paste_command",
+						text:"Paste",
+						method:"paste",
+						image_url:"images/paste.png",
+						has_extend:false,
+						short_cut:"Ctrl+V"
+						
+					},
+					{
+						id:"refresh_command",
+						text:"Refresh",
+						method:"refresh",
+						image_url:"images/refresh.png",
+						has_extend:false,
+						short_cut:"Ctrl + X"
+						
+					},
+					{
+						id:"sort_by_command",
+						text:"Sort by",
+						method:"sort_by",
+						image_url:"",
+						has_extend:true,
+						sub_menu:"sort_by_context",
+						short_cut:"F6",
+						image_off:true
+						
+					},
+					{
+						id:"properties_command",
+						text:"Properties",
+						method:"properties",
+						image_url:"images/edit.png",
+						has_extend:true,
+						sub_menu:"test_context",
+						short_cut:"F4"
+						
+					}
+				]
+			}
+		},
+		sub:[
+			{
+				instant_class:"sort_by",
+				config:{
+					normal:true
+				},
+				menu:{
+				normal:[
+					{
+						id:"name_command",
+						text:"Name",
+						method:"sort_name",
+						image_url:"",
+						has_extend:false,
+						image_off:true,
+						short_cut:""
+						
+					},
+					{
+						id:"c_date_command",
+						text:"Date created",
+						method:"sort_cdate",
+						image_url:"",
+						has_extend:false,
+						image_off:true,
+						short_cut:""
+						
+					},
+					{
+						id:"m_date_command",
+						text:"Date modified",
+						method:"sort_mdate",
+						image_url:"",
+						has_extend:false,
+						image_off:true,
+						short_cut:""
+						
+					},
+					{
+						id:"size_command",
+						text:"Size",
+						method:"sort_size",
+						image_url:"",
+						has_extend:false,
+						image_off:true,
+						short_cut:""
+						
+					},
+					{
+						id:"project_command",
+						text:"Project",
+						method:"sort_property",
+						image_url:"",
+						has_extend:false,
+						image_off:true,
+						short_cut:""
+						
+					},
+					{
+						id:"share_command",
+						text:"Sharing",
+						method:"sort_share",
+						image_url:"",
+						has_extend:false,
+						image_off:true,
+						short_cut:""
+						
+					}
+				]
+				}
+			},
+			{
+				instant_class:"test",
+				config:{
+					normal1:true
+				},
+				menu:{
+				normal1:[
+					{
+						id:"test1",
+						text:"Properties 1",
+						method:"test1",
+						image_url:"",
+						has_extend:false,
+						image_off:true,
+						short_cut:""
+						
+					},
+					{
+						id:"test2",
+						text:"Properties 2",
+						method:"sort_cdate",
+						image_url:"",
+						has_extend:false,
+						image_off:true,
+						short_cut:""
+						
+					}
+				]
+				}
+			}
+		]
+					
+	});
+	$(".icon").selected("selected");
+	
+});
+</script>
+<style>
+body{
+background: #efefef;
+
+}
+div.wrapper{
+background: #fff;
+width: 85%;
+height: 500px;
+margin: 50px auto;
+border: 2px solid #dfdfdf;
+}
+div.icon{
+margin: 50px 10px 10px 50px;
+	width: 30px;
+	height: 30px;
+	position: relative;
+	float:left;
+}
+div.file{
+border: 1px solid #fff;
+background: url('images/file.png');
+}
+div.folder{
+border: 1px solid #fff;
+background: url('images/emptyfolder.png');
+}
+div.selected{
+border: 1px solid green;
+}
+
+</style>
+
+<style>
+div.context_menu{
+width: 200px;
+background: #efefef;
+-moz-box-shadow: 3px 3px 5px gray;
+font-family: zawgyi-1;
+font-size: small;
+color: #000;
+border: 1px inset lightgray;
+position: absolute;
+left: 10px;
+top: 10px; 
+-moz-user-select:-moz-none;
+display:none;
+}
+div.sub_sort_by{
+left: 250px;
+top: 350px;
+}
+div.wall_popup{
+	left: 0px;
+	top: 300px;
+	width: 250px;
+}
+div.seprater{
+width: 2px;
+border-right: 1px solid #fff;
+background: #dfdfdf;
+position: absolute;
+top: 5px;
+left: 35px;
+height: 90%;
+}
+.context_menu table
+    {
+        border-collapse: collapse;
+		width; 100%;
+    }
+    .context_menu table tr td.left
+    {
+        width: 25px;
+		padding-left: 5px;
+    }
+	.context_menu table tr td.left img
+    {
+        width: 15px;
+		height: 15px;
+    }
+    .context_menu table tr td.seprator
+    {
+        background: #fdfdff;
+        border-left: 1px solid #dfdfdf;
+        border-bottom: 1px inset #fdfdff;
+        width: 0px;
+    }
+    .context_menu table tr td.h_bar_seprator
+    {
+        background: #dfdfdf;
+        border-bottom: 1px solid #fdfdff;
+        height: 2px;
+        margin-left: 5px;
+    }
+	 .context_menu table tr
+    {
+		border: 1px solid #efefef;
+		width: 100%;
+		cursor: default;
+		background: #efefef;
+    }
+	.context_menu table tr.lower
+    {
+		border: 1px solid #dfdfdf;
+		width: 100%;
+		cursor: default;
+		background: #D3f2f4;
+    }
+    .context_menu table tr:hover
+    {
+       background: -moz-linear-gradient(-90deg,#fff,#edf3fe);
+
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        -moz-box-shadow: 0 0 4px lightblue;
+		border: 1px solid lightblue;
+		border-top: 1px solid lightblue;
+        ovarflow: visible;
+
+    }
+	
+    .context_menu table tr td.menu_items
+    {
+		font-size: small;
+		padding-left: 10px;
+		width: 115px;
+    }
+	.context_menu table tr td.short_cut{
+		width: 70px;
+		color: #afafaf;
+		font-size: 11px;
+	}
+   
+	.context_menu table tr td.extend{
+		width: 16px;
+		color: #afafaf;
+		font-size: 11px;
+	}
+   
+   .context_menu table tr td.h_bar_inset
+    {
+        background: #dfdfdf;
+        border-bottom: 1px solid #fdfdff;
+        height: 1px;
+        margin-left: 5px;
+		width: 165px;
+    }
+	 .context_menu table tr td.h_bar_outset
+    {
+        background: #dfdfdf;
+        border-top: 1px solid #fdfdff;
+        height: 1px;
+        margin-left: 5px;
+    }
+	.context_menu table tr td.lower
+    {
+        
+       
+    }
+	.context_menu table tr td.lower:hover
+    {
+        
+       
+    }
+	.wall_tr{
+		height:20px;
+	}
+	.file_tr{
+		height:20px;
+	}
+	.folder_tr{
+		height:20px;
+	}
+	.file_folder_tr{
+		height:20px;
+	}
+</style>
+</head>
+<body>
+<h3> control + click to multi select</h3>
+<div class='wrapper'>
+<div class='icon file'></div><BR>
+</div>
+</body>
+</html>

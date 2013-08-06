@@ -1,0 +1,309 @@
+body {
+	font: small/normal sans-serif; margin: 0px; padding: 0px; color: black; font-size-adjust: none; font-stretch: normal;
+}
+em {
+	font-style: normal; font-weight: bold;
+}
+a {
+	color: rgb(0, 43, 184); text-decoration: none;
+}
+a:visited {
+	color: rgb(0, 43, 184);
+}
+a:active {
+	color: rgb(0, 43, 184);
+}
+a:hover {
+	text-decoration: underline;
+}
+p {
+	margin: 0.5em 0px; line-height: 1.4em;
+}
+p img {
+	margin: 0px;
+}
+img {
+	border: currentColor; vertical-align: middle;
+}
+h1 {
+	margin: 6px 0px 6px 25px; color: black; font-weight: normal;
+}
+h2 {
+	margin: 0px; color: black; padding-top: 0.5em; padding-bottom: 0.17em; font-weight: normal; border-bottom-color: rgb(170, 170, 170); border-bottom-width: 1px; border-bottom-style: solid;
+}
+h3 {
+	margin: 0px; color: black; padding-top: 0.5em; padding-bottom: 0.17em; font-weight: normal; border-bottom-color: rgb(170, 170, 170); border-bottom-width: 1px; border-bottom-style: solid;
+}
+h4 {
+	margin: 0px; color: black; padding-top: 0.5em; padding-bottom: 0.17em; font-weight: normal; border-bottom-color: rgb(170, 170, 170); border-bottom-width: 1px; border-bottom-style: solid;
+}
+h5 {
+	margin: 0px; color: black; padding-top: 0.5em; padding-bottom: 0.17em; font-weight: normal; border-bottom-color: rgb(170, 170, 170); border-bottom-width: 1px; border-bottom-style: solid;
+}
+h6 {
+	margin: 0px; color: black; padding-top: 0.5em; padding-bottom: 0.17em; font-weight: normal; border-bottom-color: rgb(170, 170, 170); border-bottom-width: 1px; border-bottom-style: solid;
+}
+h1 {
+	font-size: 188%;
+}
+h2 {
+	padding-top: 1em; font-size: 150%;
+}
+h2.first {
+	padding-top: 0px;
+}
+h3 {
+	font-weight: bold; border-bottom-color: currentColor; border-bottom-width: medium; border-bottom-style: none;
+}
+h4 {
+	font-weight: bold; border-bottom-color: currentColor; border-bottom-width: medium; border-bottom-style: none;
+}
+h5 {
+	font-weight: bold; border-bottom-color: currentColor; border-bottom-width: medium; border-bottom-style: none;
+}
+h6 {
+	font-weight: bold; border-bottom-color: currentColor; border-bottom-width: medium; border-bottom-style: none;
+}
+h3 {
+	font-size: 120%;
+}
+h4 {
+	font-size: 110%;
+}
+h5 {
+	font-size: 100%;
+}
+h6 {
+	font-size: 80%;
+}
+a.button {
+	border-width: 1px; border-style: solid; border-color: rgb(170, 170, 170) black black rgb(170, 170, 170); padding: 0px 3px; font-weight: bold; text-decoration: none; background-color: rgb(194, 221, 244);
+}
+a.button:hover {
+	text-decoration: none;
+}
+hr {
+	margin: 0.2em 0px; border: 0px currentColor; height: 1px; color: rgb(170, 170, 170); background-color: rgb(170, 170, 170);
+}
+p tt {
+	padding: 0px 4px; border: 1px solid rgb(221, 221, 221); font-size: 100%; white-space: nowrap; background-color: rgb(246, 246, 246);
+}
+table.columns {
+	width: 100%; background-color: rgb(194, 221, 244);
+}
+table.columns td.left {
+	width: 200px; vertical-align: top; background-color: rgb(194, 221, 244);
+}
+table.columns td.header {
+	padding-right: 120px;
+}
+table.columns td.middle {
+	padding: 0px; vertical-align: top; background-color: white;
+}
+table.columns td.middle div.body {
+	padding: 20px 10px 0px 25px;
+}
+div.corner {
+	width: 25px; height: 25px; float: left;
+}
+table.columns td.middle div.cornerul {
+	background: url("/rounded-corner-25-ul.gif") no-repeat left top rgb(194, 221, 244);
+}
+table.columns td.middle div.tabcontent {
+	border-width: 0px 1px 1px; border-style: solid; border-color: black; clear: left;
+}
+table.columns td.middle div.content {
+	margin: 0px; padding: 0px 10px 20px;
+}
+table.columns td.middle div.tabcontent {
+	margin: 0px; padding: 0px 10px 20px;
+}
+table.columns td.right {
+	width: 120px; vertical-align: top;
+}
+table.columns td.footer {
+	height: 20px; text-align: center; font-weight: bold;
+}
+div.tabContainer {
+	border-width: 0px 0px 1px; border-style: solid; border-color: black; padding: 0px; width: 100%; float: left;
+}
+div.tabContainer div {
+	margin: 0px 5px; padding: 1px 5px; border: 1px solid black; top: 1px; height: 1.3em; color: black; float: left; position: relative; background-color: rgb(238, 238, 238);
+}
+div.tabContainer div.selected {
+	font-weight: bold; border-bottom-color: white; background-color: white;
+}
+div.tabContainer div a {
+	color: black; text-decoration: none;
+}
+div.tabContainer div a:visited {
+	color: black; text-decoration: none;
+}
+div.tabContainer div a:hover {
+	text-decoration: underline;
+}
+fieldset.example {
+	padding: 10px; border: 2px solid rgb(142, 144, 134); margin-bottom: 20px;
+}
+fieldset.example legend {
+	font-weight: bold;
+}
+div.example {
+	width: 100%; -ms-overflow-x: scroll;
+}
+div.example div.text {
+	font-weight: bold;
+}
+div.codecaption {
+	font-weight: bold; margin-bottom: -5px; margin-left: 10px;
+}
+pre.code {
+	margin: 8px 0px 8px 10px; padding: 3px; border: 1px dashed black; color: black; font-size: 90%; background-color: rgb(238, 238, 238);
+}
+pre.badcode {
+	margin: 8px 0px 8px 10px; padding: 3px; border: 1px dashed black; color: black; font-size: 90%; background-color: rgb(238, 238, 238);
+}
+pre.goodcode {
+	margin: 8px 0px 8px 10px; padding: 3px; border: 1px dashed black; color: black; font-size: 90%; background-color: rgb(238, 238, 238);
+}
+pre.code b {
+	font-weight: bold;
+}
+pre.badcode b {
+	font-weight: bold;
+}
+pre.goodcode b {
+	font-weight: bold;
+}
+pre.badcode {
+	border: 1px dashed red; background-color: rgb(255, 238, 238);
+}
+pre.goodcode {
+	border: 1px dashed green; background-color: rgb(238, 255, 238);
+}
+pre.source {
+	margin: 8px 0px 8px 10px; padding: 3px; border: 1px solid black; width: 95%; height: 500px; color: black; overflow: scroll; font-size: 80%; background-color: rgb(238, 238, 238);
+}
+table.sourceDetails {
+	margin: 8px 0px 8px 10px; padding: 5px; background-color: rgb(255, 255, 255);
+}
+table.sourceDetails th {
+	border-width: medium 1px 1px; border-style: none solid solid; border-color: currentColor rgb(170, 170, 170) rgb(170, 170, 170); padding: 2px 5px 2px 2px; text-align: right; vertical-align: top; background-color: rgb(221, 221, 221);
+}
+table.sourceDetails td {
+	border-width: medium 1px 1px medium; border-style: none solid solid none; border-color: currentColor rgb(170, 170, 170) rgb(170, 170, 170) currentColor; vertical-align: top;
+}
+.portlet {
+	margin: 2px; padding: 0px; border: currentColor; font-size: 95%;
+}
+.portlet h5 {
+	margin: 0px 0px 0px 5px; font-weight: bold; white-space: nowrap;
+}
+.pBody {
+	border: 1px solid rgb(170, 170, 170); color: black; background-color: white;
+}
+.portlet a {
+	background: url("/bullet-bolt.gif") no-repeat left top white; line-height: 1.6em; padding-left: 20px; margin-left: 3px; vertical-align: middle; display: block;
+}
+.portlet a.selected {
+	font-weight: bold; background-color: rgb(160, 197, 229);
+}
+.portlet a:hover {
+	text-decoration: none; background-color: rgb(194, 221, 244);
+}
+@media print
+{
+table.columns td.left {
+	display: none;
+}
+table.columns td.right {
+	display: none;
+}
+table.columns {
+	background-color: white;
+}
+table.columns td.middle {
+	padding: 0px;
+}
+table.columns td.middle div.cornerul {
+	display: none;
+}
+table.columns td.middle div.body {
+	padding: 0px;
+}
+#searchbox {
+	display: none;
+}
+h1 {
+	margin: 6px 0px;
+}
+}
+.js_comment {
+	color: green;
+}
+table.table {
+	border: 1px solid rgb(170, 170, 170); border-collapse: collapse;
+}
+table.table td {
+	padding: 3px 5px; border: 1px solid rgb(170, 170, 170); vertical-align: top;
+}
+table.table th {
+	padding: 3px 5px; border: 1px solid rgb(170, 170, 170); vertical-align: top;
+}
+table.table thead tr th {
+	text-align: center; vertical-align: top;
+}
+table.table tbody tr th {
+	text-align: right; vertical-align: middle;
+}
+table.table th {
+	background-color: rgb(194, 221, 244);
+}
+table.table_small tbody tr td {
+	padding: 1px 2px; font-size: smaller;
+}
+table.table_small thead tr th {
+	padding: 1px 2px; font-size: smaller;
+}
+ul.links li {
+	padding: 3px 0px;
+}
+table.toc {
+	padding: 5px; border: 1px solid black; margin-left: 20px; background-color: rgb(238, 238, 238);
+}
+table.toc p.title {
+	margin: 0px; padding: 0px; font-size: 120%; font-weight: bold;
+}
+table.toc ol {
+	padding: 0px; margin-top: 10px;
+}
+table.toc ol li {
+	font-size: 110%; text-decoration: none; margin-left: 20px;
+}
+#searchbox {
+	float: right;
+}
+#searchbox form {
+	display: inline;
+}
+#searchbox form input.search {
+	color: rgb(170, 170, 170);
+}
+div.libbox {
+	margin: 15px; padding: 3px; border: 2px solid black; width: 150px; height: 250px; float: left;
+}
+div.libbox div.image {
+	height: 150px;
+}
+div.libbox div.title {
+	font-size: small; font-weight: bold; margin-top: 5px;
+}
+div.libbox div.title a {
+	text-decoration: underline;
+}
+div.libbox div.description {
+	font-family: sans serif; font-size: x-small;
+}
+.beta_tag {
+	padding: 0px 10px; border: 2px solid rgb(153, 0, 0); color: rgb(153, 153, 153); font-family: verdana, helvetica, sans serif; font-weight: bold;
+}

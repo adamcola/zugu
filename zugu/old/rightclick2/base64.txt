@@ -1,0 +1,28 @@
+I need a piece of code to call canvasImageData which holds all the base 64 image data and paste it into the image: ""  
+
+
+ie;
+
+ <script type="text/javascript">
+            var wp = $("#wPaint").wPaint({
+                image: "",
+
+
+ive tried;
+
+ <script type="text/javascript">
+            var wp = $("#wPaint").wPaint({
+                image: "canvasImageData",
+
+<script type="text/javascript">
+            var wp = $("#wPaint").wPaint({
+                image: $("#canvasImageData"),
+
+<script type="text/javascript">
+            var wp = $("#wPaint").wPaint({
+                image: "$canvasImageData",
+
+
+
+
+but there's no joy yet.

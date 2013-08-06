@@ -1,0 +1,32 @@
+drag                  done           working 
+draw                  done           working
+rightclick            done           working
+delete                done           working
+newpage               done           working
+upload                done           working
+bgimage               done           working
+share links           done           working
+hit counter           done           working
+install               done with issues (below) working
+sqlconnect            done
+rename                done           working
+wysiwyg               done
+animated home         in planning
+inject vid,sound      in planning
+
+dragbox   create new
+          delete
+          save position
+
+
+
+
+draw draw draw draw draw draw draw draw draw draw draw draw draw draw draw draw 
+
+get freelancer to call image instead of base 64 thing.
+
+install install install install install install install install install install
+
+table needs to be able to be replicated (ie incrimented each time a new page is created) 
+
+

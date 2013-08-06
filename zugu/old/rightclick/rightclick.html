@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<link rel="stylesheet" type="text/css" href="rightclick/jqcontextmenu.css" />
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+
+<script type="text/javascript" src="rightclick/jqcontextmenu.js">
+
+</script>
+
+<script type="text/javascript">
+
+//Usage: $(elementselector).addcontextmenu('id_of_context_menu_on_page')
+//To apply context menu to entire document, use: $(document).addcontextmenu('id_of_context_menu_on_page')
+
+jQuery(document).ready(function($){
+	$('a.mylinks').addcontextmenu('contextmenu1') //apply context menu to links with class="mylinks"
+})
+
+
+jQuery(document).ready(function($){
+	$('img').addcontextmenu('contextmenu2') //apply context menu to all images on the page
+})
+
+</script>
+</head>
+ <BODY>
+<p><a class="mylinks" href="http://www.dynamicdrive.com">Dynamic Drive</a></p>
+
+
+
+<!--HTML for Context Menu 1-->
+<ul id="contextmenu1" class="jqcontextmenu">
+<li><a href="#">delete</a></li>
+
+
+	
+
+

@@ -1,0 +1,22 @@
+near impossible
+
+save drawing function (very good javascript guy)
+voice recognition turns conversations directly into txt.
+
+Upload video injects html into a draggable div stays where it's left.
+same with sound, image, document, whatever. [rightclick deletes]
+
+shortcut keys will deal with objects
+
+
+
+
+
+done
+
+share [bottom right]
+hitcounter [sql or flatfile]
+right click blank page = [upload] or [new page]
+right click link = delete [php unlink]
+create new (php script) easy to implement, track with sql.
+click on = rename [same as crud]

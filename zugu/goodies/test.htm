@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<!-- saved from url=(0021)http://b1.org/online# -->
+<html style="height: 100%;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Zip online, unzip, unrar, rar, extract online, B1, uncompress files, archive</title>
+
+<meta name="Description" content="Zip, unzip, rar files online. Extract files from archive online, no installation, safe and free. Unzip, unrar decompression in cloud. Uncompress, unzipping tool">
+<meta name="Keywords" content="zip online, unzip online, extract files, uncompress, rar, unrar online, archive, tool, decompression, unarchiver, zip, .zip file, rar, b1, 7z, tool">
+<link rel="canonical" href="./test_files/online.htm">
+
+<link rel="stylesheet" type="text/css" href="./test_files/b1_main.css" media="screen">
+<link rel="stylesheet" type="text/css" href="./test_files/b1_print.css" media="print">
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="/css/b1_main_IE7.css?v=59" media="screen">
+<![endif]-->
+<!--[if gte IE 9]>
+<style type="text/css">
+.grad {
+filter: none;
+}
+</style>
+<![endif]-->
+
+<script type="text/javascript" async="" src="./test_files/ga.js"></script><script id="facebook-jssdk" src="./test_files/all.js"></script><script type="text/javascript" src="./test_files/jquery.min.js"></script>
+<script type="text/javascript" src="./test_files/app.js"></script>
+<meta name="google-translate-customization" content="580d06b3de340dc6-c67a912b162e2df5-gd0d257d0a84bc1e3-6">
+<script type="text/javascript" src="./test_files/underscore-min.js"></script>
+
+<link rel="stylesheet" href="http://b1.org/colorbox/colorbox.css">
+<script type="text/javascript" src="./test_files/jquery.colorbox-fixed.js"></script>
+
+<!--[if lte IE 8]>
+<style type="text/css">
+    .bgRow {
+        background: #f1f5f6;
+    }
+
+    .downloadList li.bg, .zebra .item.bg {
+        background: #f1f5f6;
+    }
+
+    .innerContentOnline table tr:hover {
+        background: #e0e8eb;
+    }
+
+    .itemIconDownload, .itemIconPlay, .itemIconViewImage, .itemIconPlayAudio {
+        background: url(/images/online_archive_icons_sprite_IE.gif) no-repeat;
+        background-position: center -112px;
+    }
+
+    .itemIconPlay {
+        margin-right: 5px;
+        background-position: center -128px;
+    }
+
+    .itemIconViewImage {
+        margin-right: 5px;
+        background-position: center -144px;
+    }
+
+    .itemIconPlayAudio {
+        margin-right: 5px;
+        background-position: center -160px;
+    }
+</style>
+<![endif]-->
+<script type="text/javascript">
+_.templateSettings = {
+    evaluate: /\[%([\s\S]+?)%\]/g,
+    interpolate: /\[%=([\s\S]+?)%\]/g,
+    escape: /\[%-([\s\S]+?)%\]/g,
+    variable: "context"
+};
+
+$(document).ready(function () {
+    var ajaxUpload = window.FormData && window.XMLHttpRequest && new XMLHttpRequest()['upload'];
+    var videoElement = document.getElementById("video");
+    var audioElement = document.getElementById("audio");
+    var hiddenIframe = document.getElementById("hiddenIframe");
+    var imageTypes = _(['gif', 'jpeg', 'jpg', 'png', 'bmp', 'ico']);
+    var imgTypes = _(['gif', 'jpeg', 'jpg', 'png']);
+    var textTypes = _(['doc', 'txt', 'rtf', 'docx', 'odt', 'xls', 'xlsx']);
+    var debug = document.location.hash == "#debug" && console !== undefined && console.log !== undefined;
+    var views = ["#selectView", "#uploadView", "#extractView", "#errorView", "#passwordView", "#listView", "#cleanupView"];
+    var digitGroupRegex = /(\d+)(\d{3})/;
+    var templates = {};
+    var eventCount = {};
+    var currentListing;
+    var uploadInProgress;
+    var bookmarkShortcut;
+    var jqueryRequest;
+    var xhr;
+
+    function safeEncodeURIComponent(uriComponent) {
+        return encodeURIComponent(uriComponent).replace("'", "%27");
+    }
+
+    function purge(element) {
+        if (element.pause) element.pause();
+        element.removeAttribute("src");
+        if (element.load) element.load();
+    }
+
+    $(document).bind('cbox_purge', function () {
+        purge(videoElement);
+        purge(audioElement);
+    });
+
+    _(views).each(function (view) {
+        var script = $(view + " > script[type='text/x-template']");
+        templates[view] = _.template(script.html());
+        $(view).html("");
+    });
+
+    if (window.sidebar && window.sidebar.addPanel) {
+        window.addBookmark = function (link) {
+            window.sidebar.addPanel(link.title, link.href, "");
+        };
+    } else if (window.external && typeof window.external.AddFavorite !== 'undefined') {
+        window.addBookmark = function (link) {
+            window.external.AddFavorite(link.href, link.title);
+        };
+    } else {
+        bookmarkShortcut = navigator.appVersion.indexOf("Mac") != -1 ? "Cmd+" : "Ctrl+";
+        bookmarkShortcut += /(konqueror)|(rekonq)/.test(navigator.userAgent.toLowerCase()) ? "B" : "D";
+    }
+
+    function trackEvent(label, opt_value, opt_limit) {
+        if (opt_limit !== undefined) {
+            var key = label + "#" + opt_value;
+            var count = eventCount[key] || 0;
+            if (count > opt_limit) return;
+            eventCount[key] = count + 1;
+        }
+        var event = ['_trackEvent', 'onlinearch', label];
+        if (opt_value !== undefined) event.push(opt_value);
+        if (debug) console.log(event);
+        window['_gaq'].push(event);
+    }
+
+    function showView(view, context) {
+        _(views).each(function (view) {
+            $(view).hide();
+        });
+        $(view).html(templates[view](context || {}));
+        $(view).show();
+    }
+
+    function setType(object, item) {
+        if (object.children !== undefined) {
+            item.type = "Folder";
+            return;
+        }
+        var mime = object['mime'];
+        if (mime && mime.lastIndexOf("audio/", 0) == 0) {
+            item.type = "Audio";
+            item.audioPreview = audioElement.canPlayType && audioElement.canPlayType(mime);
+            return;
+        }
+        if (mime && mime.lastIndexOf("video/", 0) == 0) {
+            item.type = "Video";
+            item.videoPreview = videoElement.canPlayType && videoElement.canPlayType(mime);
+            return;
+        }
+        var name = object.name.toLowerCase();
+        var dotIndex = name.lastIndexOf('.');
+        if (dotIndex >= 0) {
+            var ext = name.substring(dotIndex + 1);
+            if (imageTypes.contains(ext)) {
+                item.type = "Image";
+                item.imagePreview = imgTypes.contains(ext);
+                return;
+            }
+            if (textTypes.contains(ext)) {
+                item.type = "TextFile";
+                return;
+            }
+            if (ext == 'pdf') {
+                item.type = "PDF";
+                return;
+            }
+        }
+        item.type = "File";
+    }
+
+    function formatSize(size) {
+        size += "";
+        while (digitGroupRegex.test(size)) {
+            size = size.replace(digitGroupRegex, '$1' + ',' + '$2');
+        }
+        return size;
+    }
+
+    function cancelAjax() {
+        uploadInProgress = false;
+        if (jqueryRequest) {
+            jqueryRequest.abort();
+            jqueryRequest = undefined;
+        }
+        if (xhr) {
+            xhr.abort();
+            xhr = undefined;
+        }
+        try {
+            var contentWindow = hiddenIframe.contentWindow;
+            if (contentWindow.stop) {
+                contentWindow.stop();
+            } else {
+                contentWindow.document.execCommand('Stop');
+            }
+        } catch (e) {
+            // ignore errors
+        }
+        hiddenIframe.src = "javascript:void(0);";
+    }
+
+    function submitAjaxForm(form) {
+        $(hiddenIframe).replaceWith("<iframe id='hiddenIframe' name='hiddenIframe' width='0' height='0'></iframe>");
+        hiddenIframe = document.getElementById("hiddenIframe");
+        xhr = new XMLHttpRequest();
+        var upload = xhr['upload'];
+        upload.onprogress = function (e) {
+            if (e['lengthComputable']) {
+                var loaded = e['loaded'];
+                var total = e['total'];
+                if (total - loaded > 65536) {
+                    $("#progress").text(Math.round(loaded / total * 90) + "%");
+                    return;
+                }
+            }
+            showView('#extractView');
+            upload.onprogress = null;
+            upload.onload = null;
+        };
+        upload.onload = function (e) {
+            showView('#extractView');
+        };
+        xhr.onload = function () {
+            if (xhr.status == 200) {
+                var doc = hiddenIframe.contentWindow.document;
+                doc.open();
+                doc.write(xhr.responseText);
+                doc.close();
+            } else {
+                window.onIframeLoad();
+            }
+        };
+        xhr.onerror = xhr.onabort = window.onIframeLoad;
+        xhr.open('POST', form.action, true);
+        xhr.send(new FormData(form));
+    }
+
+    window.showSelectView = function () {
+        cancelAjax();
+        showView('#selectView');
+        trackEvent('repeat', 'browse');
+    };
+
+    window.onFileDialog = function () {
+        cancelAjax();
+        trackEvent('start', 'upload');
+    };
+
+    window.startUpload = function (fileInput) {
+        uploadInProgress = true;
+        var files = fileInput.files;
+        if (files && files.length) {
+            var file = files[0];
+            var name = file.name || "";
+            var ext = name.substring(name.lastIndexOf(".") + 1);
+            if (!/^(b1|zip|jar|xpi|rar|7z|arj|bz2|bzip2|tbz2|tbz|cab|chm|chi|chq|chw|hxs|hxi|hxr|hxq|hxw|lit|cpio|deb|gz|gzip|tgz|tpz|hfs|iso|lzh|lha|lzma|lzma86|rpm|tar|xar|z|taz)$/i.test(ext)) {
+                showErrorView({
+                    message: "Archive type not supported:",
+                    fileName: file.name
+                });
+                trackEvent('error_client', 'extension');
+                return;
+            }
+            
+            if (file.size && file.size > 314572800) {
+                showErrorView({
+                    message: "The file is too large, you can only upload files smaller than 300 MB"
+                });
+                trackEvent('error_client', 'size');
+                return;
+            }
+            
+            trackEvent('filetype', ext);
+        }
+        if (ajaxUpload) {
+            submitAjaxForm(fileInput.form);
+            showView('#uploadView');
+        } else {
+            fileInput.form.submit();
+            showView('#extractView');
+        }
+        trackEvent('progress', 'upload');
+    };
+
+    window.onPasswordSent = function (form) {
+        uploadInProgress = true;
+        showView('#extractView');
+    };
+
+    window.uploadComplete = function (result) {
+        cancelAjax();
+        var passwordPresent = result['passwordPresent'];
+        if (!passwordPresent) {
+            trackEvent('finished', 'upload');
+        }
+        uploadInProgress = false;
+        currentListing = result['listing'];
+        if (currentListing !== undefined) {
+            showListView();
+            trackEvent('start', 'browse');
+        } else if (result['encryptedFileName'] !== undefined) {
+            cancelAjax();
+            if (passwordPresent) {
+                trackEvent('password_wrong', 'upload');
+            } else {
+                trackEvent('password', 'upload');
+            }
+            showView('#passwordView', result);
+        } else {
+            showErrorView(result);
+            var suffix = result.message == 'IOException' ? '_io' : result.message == 'SocketTimeoutException' ? '_st' : '';
+            trackEvent('error_server' + suffix, result['phase']);
+        }
+    };
+
+    window.showErrorView = function (context) {
+        cancelAjax();
+        showView('#errorView', context || {});
+    };
+
+    window.onIframeLoad = function () {
+        if (uploadInProgress) {
+            showErrorView();
+            trackEvent('error_client', 'upload');
+        }
+    };
+
+    window.onVideoMetadataLoad = function (video) {
+        $.colorbox.resize({
+            innerWidth: video.videoWidth,
+            innerHeight: video.videoHeight
+        });
+    };
+
+    window.showListView = function (path) {
+        if (path) {
+            trackEvent('progress', 'browse', 50);
+        } else {
+            path = safeEncodeURIComponent(currentListing.name);
+        }
+        var names = _(path.split("/")).map(function (name) {
+            return decodeURIComponent(name);
+        });
+        var context = {
+            items: [],
+            breadcrumbs: []
+        };
+        var objects = [currentListing];
+        _(names).each(function (name) {
+            objects = _(objects).find(
+                    function (item) {
+                        return item.name == name;
+                    }).children;
+        });
+        _(objects).each(function (object) {
+            var item = {
+                name: object.name,
+                path: path + '/' + safeEncodeURIComponent(object.name)
+            };
+            setType(object, item);
+            if (object.children === undefined) {
+                item.size = formatSize(object.size);
+                item.displaySize = object.displaySize;
+            }
+            context.items.push(item);
+        });
+        context.currentBreadcrumbName = names.pop().substring(0, 50);
+        path = "";
+        _(names).each(function (name) {
+            if (path) path += '/';
+            path += safeEncodeURIComponent(name);
+            context.breadcrumbs.push({
+                name: name.substring(0, 50),
+                path: path
+            });
+        });
+        showView("#listView", context);
+        $(".innerContentOnline table tr").hover(function () {
+            $(".rightColumn a", this).stop().animate({"opacity": 1});
+        }, function () {
+            $(".rightColumn a", this).stop().animate({"opacity": 0.5});
+        });
+        var colorboxOptions = {
+            rel: "gallery",
+            current: "",
+            title: function () {
+                return this.getAttribute("data-title");
+            },
+            minWidth: 150
+        };
+        $("a.itemIconViewImage").colorbox(colorboxOptions);
+        $("a.itemIconPlay").colorbox($.extend({
+            scrolling: false,
+            inline: true,
+            href: "#video",
+            onLoad: function () {
+                videoElement.setAttribute("src", this.href);
+            }
+        }, colorboxOptions));
+        $("a.itemIconPlayAudio").colorbox($.extend({
+            inline: true,
+            href: "#audio",
+            onLoad: function () {
+                audioElement.setAttribute("src", this.href);
+            }
+        }, colorboxOptions));
+    };
+
+    window.onDownload = function () {
+        trackEvent('start', 'download', 50);
+    };
+
+    window.onPreview = function (type) {
+        trackEvent('start', type, 50);
+    };
+
+    window.startDeletion = function () {
+        trackEvent('start', 'removefiles');
+        cancelAjax();
+        showView("#cleanupView", {
+            deletionInProgress: true
+        });
+        jqueryRequest = $['post']("rest/online/cleanup").error(showErrorView).success(function () {
+            showView("#cleanupView", {
+                deletionComplete: true,
+                bookmarkShortcut: bookmarkShortcut
+            });
+        });
+    };
+
+    trackEvent('init');
+    showView('#selectView');
+});
+</script>
+<link type="text/css" rel="stylesheet" charset="UTF-8" href="./test_files/translateelement.css"><script type="text/javascript" charset="UTF-8" src="./test_files/main.js"></script><script type="text/javascript" charset="UTF-8" src="./test_files/element_main.js"></script></head>
+<body class="content_page" style="position: relative; min-height: 100%; top: 0px;">
+<div style="display: none;">
+    <video id="video" controls="controls" onloadedmetadata="onVideoMetadataLoad(this)"></video>
+    <audio id="audio" controls="controls" autoplay="autoplay"></audio>
+    <iframe id="hiddenIframe" name="hiddenIframe" width="0" height="0" src="javascript:void(0);"></iframe>
+</div>
+<div class="mainContainer">
+<div class="topContainer">
+<div class="header">
+    <div class="centered">
+
+        <div class="logoArea floatLeft">
+            <a class="logoImage floatLeft" href="http://b1.org/"></a>
+            <a class="logoText" href="http://b1.org/"></a>
+        </div>
+
+        <div class="topMenu floatRight grad">
+            <div class="innerBorder">
+                <a href="http://b1.org/" title="Home"><span class="">Home</span></a>|<a href="http://b1.org/features.jsp" title="Features"><span class="">Features</span></a>|<a href="http://b1.org/download" title="Download">Download</a>|<a class="active" href="./test_files/online.htm" title="Online archiver"><span class="notranslate">Online archiver</span></a>|<a href="http://b1.org/help/How-to-open-b1-archive-and-extract-files-from-b1-archive-in-one-click.jsp" title="Help"><span class="">Help</span></a>|<a href="http://b1.org/blog.jsp" title="Blog"><span class="">Blog</span></a>|<a href="http://b1.org/support.jsp" title="Support &amp; Feedback"><span class="notranslate">Support &amp; Feedback</span></a></div>
+        </div>
+        <div id="fb-root"></div>
+        <script>
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s);
+                js.id = id;
+                js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=326750177396514";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+        </script>
+        <div class="clearfix"></div>
+    </div>
+</div><div id="google_translate_element"><div class="skiptranslate goog-te-gadget" dir="ltr" style=""><div id=":0.targetLanguage" class="goog-te-gadget-simple" style="white-space: nowrap;"><img src="./test_files/cleardot.gif" class="goog-te-gadget-icon" style="background-image: url(http://translate.googleapis.com/translate_static/img/te_ctrl3.gif); background-position: -65px 0px;"><span style="vertical-align: middle;"><a class="goog-te-menu-value" href="javascript:void(0)"><span>Select Language</span><img src="./test_files/cleardot.gif" width="1" height="1"><span style="border-left-width: 1px; border-left-style: solid; border-left-color: rgb(187, 187, 187);">​</span><img src="./test_files/cleardot.gif" width="1" height="1"><span style="color: rgb(155, 155, 155);">▼</span></a></span></div></div></div>
+<script>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            multilanguagePage: true,
+            gaTrack: true,
+            gaId: 'UA-27910806-1',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+    }
+</script>
+<script src="./test_files/element.js"></script><div class="centered">
+<div class="content">
+<script type="text/javascript" src="./test_files/jquery.jcarousel.min.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function () {
+        jQuery('#mycarousel').jcarousel({
+            vertical: true,
+            auto: 3,
+            wrap: 'circular',
+            scroll: -1,
+            itemFallbackDimension: 48
+        });
+    });
+</script>
+<div class="topLine grad">
+    <div class="counter floatLeft">
+        <div class="counterTitleArea floatLeft">
+            <div class="counterTitleAreaText">
+                <div class=" jcarousel-skin-tango"><div class="jcarousel-container jcarousel-container-vertical" style="position: relative; display: block;"><div class="jcarousel-clip jcarousel-clip-vertical" style="position: relative;"><ul id="mycarousel" class="jcarousel notranslate jcarousel-list jcarousel-list-vertical" style="overflow: hidden; position: relative; top: 0px; margin: 0px; padding: 0px; left: 0px; height: 484px;">
+                    <li class="jcarousel-item jcarousel-item-vertical jcarousel-item--57 jcarousel-item--57-vertical" jcarouselindex="-57" style="float: left; list-style: none;">Unzip &amp; unrar files in one click</li><li class="jcarousel-item jcarousel-item-vertical jcarousel-item-1 jcarousel-item-1-vertical" jcarouselindex="1" style="float: left; list-style: none;">B1 Free Archiver</li>
+                    <li class="jcarousel-item jcarousel-item-vertical jcarousel-item-2 jcarousel-item-2-vertical" jcarouselindex="2" style="float: left; list-style: none;">B1 Online - extract from archives online</li>
+                    <li class="jcarousel-item jcarousel-item-vertical jcarousel-item-3 jcarousel-item-3-vertical" jcarouselindex="3" style="float: left; list-style: none;">Unzip &amp; unrar files in one click</li>
+                    <li class="jcarousel-item jcarousel-item-vertical jcarousel-item-4 jcarousel-item-4-vertical" jcarouselindex="4" style="float: left; list-style: none;">Excellent and fast compression</li>
+                    <li class="jcarousel-item jcarousel-item-vertical jcarousel-item-5 jcarousel-item-5-vertical" jcarouselindex="5" style="float: left; list-style: none;">Simple and friendly utility</li>
+                    <li class="jcarousel-item jcarousel-item-vertical jcarousel-item-6 jcarousel-item-6-vertical" jcarouselindex="6" style="float: left; list-style: none;">Open .zip .rar .7z .b1 and more</li>
+                    </ul></div><div class="jcarousel-prev jcarousel-prev-vertical" style="display: block;"></div><div class="jcarousel-next jcarousel-next-vertical" style="display: block;"></div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!--Like buttons-->
+    <ul class="likesButtonsArea floatRight notranslate">
+        <li class="likesButtonsAreaFacebook">
+            <div class="fb-like" data-href="https://www.facebook.com/b1archiver" data-send="false" data-width="200" data-layout="button_count" data-show-faces="false" data-font="lucida grande"></div>
+        </li>
+        </ul>
+    <!--Like buttons-->
+    <div class="clearfix"></div>
+</div><div class="innerContent">
+
+<div id="selectView" style="display: none;" class="innerContentOnline">
+        <form action="http://b1.org/rest/online/upload" method="post" enctype="multipart/form-data" target="hiddenIframe" class="innerContentOnlineForm">
+            <h1>B1 Online Archiver</h1>
+
+            <h2>The simplest way to get files from <span class="notranslate" style="display:inline;">.b1 .zip .rar .7z </span>and other archives</h2>
+
+            <p class="descr">Click "select" to choose archive
+                from your computer, wait for a few moments,<br>
+                then browse through archived files, and download or preview only files you need.<br>
+            </p>
+
+            <div class="innerContentOnlineSteps">
+                <ul>
+                    <li class="currentStep">
+                        <a class="selectArchiveButton" href="./test_files/test.htm">
+                            <input name="file" type="file" class="downloadButtonInput2" onchange="startUpload(this)" onclick="onFileDialog()">
+                            Select archive
+                        </a>
+                    </li>
+                    <li class="innerContentOnlineStepsPointer"></li>
+                    <li>Extracting...</li>
+                    <li class="innerContentOnlineStepsPointer"></li>
+                    <li>Your files</li>
+                </ul>
+            </div>
+            <a class="downloadButton grad" href="./test_files/test.htm">
+                <input name="file" type="file" class="downloadButtonInput" onchange="startUpload(this)" onclick="onFileDialog()">
+                Click here
+                <strong>to select b1, zip, rar or other archive from your computer</strong>
+            </a>
+            <div style="clear:both;padding-top:10px;">
+                <span style="font-weight:bold;">Supported formats:</span>
+                <span class="notranslate">
+                    b1, zip, jar, xpi, rar, 7z, arj, bz2, bzip2, tbz2, tbz, cab, chm, chi, chq, chw, hxs, hxi, hxr, hxq,
+                    hxw, lit, cpio, deb, gz, gzip, tgz, tpz, hfs, iso, lzh, lha, lzma, rpm, tar, xar, z, taz
+                </span>
+            </div>
+            <ul class="featuresList">
+                <li>Simple<i>Just a few clicks and it's done</i></li>
+                <li>Safe<i>Nobody but you will see your files</i></li>
+                <li>No extra software<i>No need to download or install anything</i></li>
+                <li>Secure<i>All files will be completely deleted a few minutes after you close this page</i></li>
+            </ul>
+        </form>
+    </div>
+
+<div id="uploadView" style="display: none;" class="innerContentOnline">
+        <h1>B1 Online Archiver</h1>
+
+        <h2>The simplest way to get files from <span class="notranslate" style="display:inline;">.b1 .zip .rar .7z </span>and other archives</h2>
+
+        <div class="innerContentOnlineSteps">
+            <ul>
+                <li>
+                    <form action="http://b1.org/rest/online/upload" method="post" enctype="multipart/form-data" target="hiddenIframe" class="innerContentOnlineForm">
+                        <a class="selectArchiveButtonOtherSteps" href="./test_files/test.htm">
+                            <input name="file" type="file" class="downloadButtonInput2" onchange="startUpload(this)" onclick="onFileDialog()">
+                            Select archive
+                        </a>
+                    </form>
+                </li>
+                <li class="innerContentOnlineStepsPointer"></li>
+                <li class="currentStep">Extracting...</li>
+                <li class="innerContentOnlineStepsPointer"></li>
+                <li>Your files</li>
+            </ul>
+        </div>
+        <div class="zebra">
+            <div class="item bg">
+                <p>Please wait for a few moments... <span id="progress"></span></p>
+                <img src="./test_files/paper_small_gif_final.gif" class="extractingLoader">
+                <!--<img src="images/pb-loader.gif" class="extractingLoaderPB"/>-->
+                <ul class="innerContentOnlineStepsLinks">
+                    <li class="floatLeft"><a href="./test_files/test.htm" onclick="showSelectView()">Forget it, let's try another
+                        archive</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+<div id="extractView" style="display: none;" class="innerContentOnline">
+        <h1>B1 Online Archiver</h1>
+
+        <h2>The simplest way to get files from <span class="notranslate">.b1 .zip .rar .7z </span>and other archives</h2>
+
+        <div class="innerContentOnlineSteps">
+            <ul>
+                <li>
+                    <form action="http://b1.org/rest/online/upload" method="post" enctype="multipart/form-data" target="hiddenIframe" class="innerContentOnlineForm">
+                        <a class="selectArchiveButtonOtherSteps" href="./test_files/test.htm">
+                            <input name="file" type="file" class="downloadButtonInput2" onchange="startUpload(this)" onclick="onFileDialog()">
+                            Select archive
+                        </a>
+                    </form>
+                </li>
+                <li class="innerContentOnlineStepsPointer"></li>
+                <li class="currentStep">Extracting...</li>
+                <li class="innerContentOnlineStepsPointer"></li>
+                <li>Your files</li>
+            </ul>
+        </div>
+        <div class="zebra">
+            <div class="item bg">
+                <p>Please wait for a few moments...</p>
+                <img src="./test_files/paper_small_gif_final.gif" class="extractingLoader">
+                <ul class="innerContentOnlineStepsLinks">
+                    <li class="floatLeft"><a href="./test_files/test.htm" onclick="showSelectView()">Forget it, let's try another
+                        archive</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+<div id="errorView" style="display: none;" class="innerContentOnline"></div>
+
+<div id="passwordView" style="display: none;" class="innerContentOnline"></div>
+
+<div id="listView" style="display: block;" class="innerContentOnline">
+        <h1>B1 Online Archiver</h1>
+
+        <h2>The simplest way to get files from <span class="notranslate">.b1 .zip .rar .7z </span>and other archives</h2>
+
+        <div class="innerContentOnlineSteps">
+            <ul>
+                <li>
+                    <form action="http://b1.org/rest/online/upload" method="post" enctype="multipart/form-data" target="hiddenIframe" class="innerContentOnlineForm">
+                        <a class="selectArchiveButtonOtherSteps" href="./test_files/test.htm">
+                            <input name="file" type="file" class="downloadButtonInput2" onchange="startUpload(this)" onclick="onFileDialog()">
+                            Select archive
+                        </a>
+                    </form>
+                </li>
+                <li class="innerContentOnlineStepsPointer"></li>
+                <li>Extracting...</li>
+                <li class="innerContentOnlineStepsPointer"></li>
+                <li class="currentStep">Your files</li>
+            </ul>
+        </div>
+        <div class="breadcrumbs notranslate">
+            <ul>
+                
+                <li>
+                    <a href="./test_files/test.htm" class="currentBreadcrumb">draw.rar</a>
+                </li>
+            </ul>
+        </div>
+        <table cellpadding="0" cellspacing="0" class="notranslate">
+            
+            <tbody><tr class="bgRow">
+                <td class="leftColumn">
+                    
+                    <div onclick="showListView(&#39;draw.rar/draw&#39;)">
+                        <span class="itemIconFolder"></span>
+                        <a href="./test_files/test.htm" class="archiveListItemName">draw</a>
+                    </div>
+                    
+                </td>
+                <td class="rightColumn">
+                    
+                </td>
+                <td class="rightColumn">
+                    
+                </td>
+            </tr>
+            
+        </tbody></table>
+        <ul class="innerContentOnlineStepsLinks">
+            <li class="floatLeft"><a href="./test_files/test.htm" onclick="showSelectView()" class="listViewBackLink">Let's try another
+                archive</a></li>
+            <li class="floatRight deleteFiles">All your files will be automatically deleted<br>
+                in a few minutes after you close this page.<br>
+                To remove them right now please <a href="./test_files/test.htm" onclick="startDeletion()">click here</a>
+            </li>
+        </ul>
+    </div>
+
+<div id="cleanupView" style="display: none;" class="innerContentOnline"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="footerClearFix"></div>
+<div class="bottomContainer">
+    <div class="topFooter">
+        <div class="innerBorder">
+            <div class="centered">
+                <img src="./test_files/b1_light_blue.png" width="123" height="126" class="floatLeft" alt="b1">
+
+                <div class="bottomMenu floatLeft">
+                    <div class="block">
+                        <ul>
+                            <li class="htitle notranslate"><a href="http://b1.org/about.jsp">About</a></li>
+                            <li><a href="http://b1.org/features.jsp" title="Features">Features</a>
+                            </li>
+                            <li><a href="http://b1.org/translation.jsp" title="Translations">Translations</a>
+                                <a href="http://crowdin.net/project/b1-interface/invite" rel="nofollow" target="_blank">
+                                    (crowdin.net)
+                                </a>
+                            </li>
+                            <li><a href="http://b1.org/graphics.jsp" title="B1 Free Archiver links and buttons">Links
+                                and buttons</a></li>
+                            <li><a href="http://b1.org/affiliate.jsp" title="B1 Affiliate program">Affiliate
+                                program</a></li>
+                        </ul>
+                    </div>
+                    <div class="block download_block">
+                        <ul>
+                            <li class="htitle"><a href="http://b1.org/download">Download</a></li>
+                            <li><a href="http://b1.org/download-windows" title="B1 Windows archive manager">B1 Windows free
+                                archiver</a></li>
+                            <li><a href="http://b1.org/download-linux" title="B1 Linux archive manager">B1 Linux free archiver</a>
+                            </li>
+                            <li><a href="http://b1.org/download-mac" title="B1 Mac archive manager">B1 Mac free archiver</a></li>
+                            <li><a href="http://b1.org/download-android" title="B1 for Android">B1 Android free archiver</a></li>
+                        </ul>
+                    </div>
+                    <div class="block">
+                        <ul>
+                            <li class="htitle"><a href="http://b1.org/developers.jsp">For developers</a></li>
+                            <li><a href="http://b1.org/developers.jsp" title="Introduction to b1">Introduction to b1</a></li>
+                            <li><a href="http://dev.b1.org/standard/archive-format.html" title="B1 Format description">B1
+                                Format description</a></li>
+                            <li><a href="http://dev.b1.org/" title="B1 Developer tools">B1 Developer tools</a></li>
+                            <li><a href="https://groups.google.com/group/b1-pack-discuss" rel="nofollow" title="B1 Discussion group">B1 Discussion group</a></li>
+                        </ul>
+                    </div>
+                    <div class="block like_block">
+                        <ul>
+                            <li class="htitle notranslate">Follow Us</li>
+                            <li class="followFacebook notranslate"><a rel="nofollow" href="http://www.facebook.com/b1archiver" target="_blank">Follow us on Facebook</a></li>
+                            <li class="followTwitter notranslate"><a rel="nofollow" href="https://twitter.com/#!/B1archiver" target="_blank">Follow us on Twitter</a></li>
+                            <li class="followGooglePlus">
+                                <a href="https://plus.google.com/116437999960512782481/" rel="publisher nofollow" target="_blank" style="text-decoration:none;display:block;">
+                                    <img src="./test_files/gplus-16.png" alt="" style="border:0;width:16px;height:16px;">
+                                    <span class="googlePlusJoin notranslate" style="position:relative;top:-3px;left:2px;">Join us on Google+</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="searchInFooter">
+                        <form action="http://search.b1.org/">
+                            <input type="text" name="q" class="searchQuery">
+                            <input type="hidden" name="channel_id" class="0">
+                            <input type="hidden" name="bsrc" class="0">
+
+                            <div class="searchContainer">
+                                <input type="submit" value="Search" class="searchSubmit">
+                            </div>
+                        </form>
+                    </div>
+
+                    </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+    <div class="foo">
+        <address>Copyright © Catalina Group Ltd. All Rights Reserved</address>
+        . B1 is a <a title="free file archiver" href="http://b1.org/?noredirect=1">free file archiver</a>
+        which is available for all popular OS (<a title="B1 Free Archiver for Windows" href="http://b1.org/windows">Windows</a>, <a title="B1 Free Archiver for Mac" href="http://b1.org/mac">Mac</a>, <a title="B1 Free Archiver for Linux" href="http://b1.org/linux">Linux</a>
+        and <a title="B1 Free Archiver for Android" href="http://b1.org/android">Android</a>)<br> and supports zip, rar and other
+        common types of archives. Android is a trademark of Google Inc.
+    </div>
+</div>
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-27910806-1']);
+    _gaq.push(['_trackPageview']);
+    (function () {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+<script type="text/javascript">
+    $(function () {
+        loadSocials();
+    });
+</script>
+<script type="text/javascript">
+    document.write("<img src='http://www.jscount.com/a/333/800dd892/z?ref=" +
+            escape(document.referrer) + "&url=" + escape(document.URL) + "&rand=" + Math.random() + "' width=1 height=1 alt='' style='display:none'>")</script><img src="./test_files/z" width="1" height="1" alt="" style="display:none">
+
+
+</div>
+
+
+<div id="cboxOverlay" style="display: none;"></div><div id="goog-gt-tt" class="skiptranslate" dir="ltr"><div style="padding: 8px;"><div><div class="logo"><img src="./test_files/translate-32.png" width="20" height="20"></div><iframe style="width:348px;height:1.1em;float:right;" id="signin_status" border="0" frameborder="0" src="./test_files/tminfo.htm"></iframe></div></div><div class="top" style="padding: 8px; float: left; width: 100%;"><h1 class="title gray">Original text</h1></div><div class="middle" style="padding: 8px;"><div class="original-text"></div></div><div class="bottom" style="padding: 8px;"><div class="activity-links"><span class="activity-link">Contribute a better translation</span><span class="activity-link"></span></div><div class="started-activity-container"><hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;"><div class="activity-root"></div></div></div><div class="status-message" style="display: none;"></div></div><div id="colorbox" class="" style="display: none; padding-bottom: 42px; padding-right: 42px;"><div id="cboxWrapper"><div><div id="cboxTopLeft" style="float: left;"></div><div id="cboxTopCenter" style="float: left;"></div><div id="cboxTopRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxMiddleLeft" style="float: left;"></div><div id="cboxContent" style="float: left;"><div id="cboxLoadedContent" style="width: 0px; height: 0px; overflow: hidden; float: left;"></div><div id="cboxLoadingOverlay" style="float: left;"></div><div id="cboxLoadingGraphic" style="float: left;"></div><div id="cboxTitle" style="float: left;"></div><div id="cboxCurrent" style="float: left;"></div><div id="cboxNext" style="float: left;"></div><div id="cboxPrevious" style="float: left;"></div><div id="cboxSlideshow" style="float: left;"></div><div id="cboxClose" style="float: left;"></div></div><div id="cboxMiddleRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxBottomLeft" style="float: left;"></div><div id="cboxBottomCenter" style="float: left;"></div><div id="cboxBottomRight" style="float: left;"></div></div></div><div style="position: absolute; width: 9999px; visibility: hidden; display: none;"></div></div><iframe frameborder="0" class="goog-te-menu-frame skiptranslate" style="visibility: visible; box-sizing: content-box; width: 676px; height: 274px; display: none;"></iframe></body></html>

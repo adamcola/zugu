@@ -1,0 +1,15 @@
+<form name= "go" onsubmit='converturl();location.href=fullurl.value;return false'>
+<input name='url' type='text' /> <input name='fullurl' type='hidden' /> 
+<input type='submit' value="Go" />
+</form>
+<script> 
+function converturl() { 
+document.go.url.value = document.go.url.value.replace( /\s/g, ""); 
+var url = document.getElementsByName( "url")[0]; 
+var fullurl = document.getElementsByName( "fullurl")[0]; 
+fullurl.value = "addpage.php?page="+ url.value +".html"; 
+//msg = document.go.url.value +".html, create this page by clicking save" 
+//return confirm(msg); 
+} 
+</script> 
+

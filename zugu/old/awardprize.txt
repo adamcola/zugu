@@ -1,0 +1,83 @@
+Zugu is almost there, the concept is genius in it's simplicity but big on its ability.
+
+Zugu, is not just a single sketch page, it is the birth of truly linked web structure, you could call it internet 2.0.
+
+how it works, zugu users a Jquery paint program for its backbone.  This allows users to draw on the screen which is very helpful for drawing rings round things creating arrows  or just drawing smiley faces.  zugu's next trick is its right click context menu, which allows the user to create a link and a new page in one go.  When they have named this page, the link appears as a floating div (the div's position remains wherever it's placed.) when clicked on this Blank page can then be edited.
+
+So that was the backbone, the other great additions to zugu are its 0 latency, speed, error free, intuitive content. Including the  ability to easily delete links (other pages) using the right click context menu, add videos, images, sounds, other webpages, animated flash swf's, widgets (you get the idea) to any page.
+
+The structure for now will be completely anonymous, meaning we won't be requiring login username password at this point, the idea is to generate a lot of content fast in order to attract visitors and link socially also to generate superb search engine optimisation.
+
+I believe this site structure would benefit creative professionals, web designers, bloggers, novices and people who like to brainstorm.  This place would be like a idea lounge, allowing many people the chance to edit, amend and delete pages as they choose.  All links have hit counters using a PHP flatfile to give the page viewer an indication of what people are looking at.
+
+There's lots of scope for advertising and other opportunities but for now I'm just concentrating on the functionality of this project.
+I have most of this script completed and just having trouble with a couple of lines of code.
+
+I will be awarding prize money to anyone who would like to come on board this site exciting project and help iron out the creases so to speak!
+
+issues below;
+
+
+drag                  done with issues (below)
+draw                  done with issues (below)
+rightclick            done with issues (below)
+delete                done
+newpage               done
+rename                done
+upload                done
+sqlconnect            done
+bgimage               done
+share links           done
+hit counter           done           working
+animated home         in planning
+inject                in planning
+
+
+drawdrawdrawdrawdrawdrawdrawdrawdrawdrawdrawdrawdrawdrawdrawdrawdrawdrawdraw
+
+I need a piece of code to call canvasImageData which holds all the base 64 image data and paste it into the image: ""  
+
+
+ie;
+
+ <script type="text/javascript">
+            var wp = $("#wPaint").wPaint({
+                image: "",
+
+
+ive tried;
+
+ <script type="text/javascript">
+            var wp = $("#wPaint").wPaint({
+                image: "canvasImageData",
+
+<script type="text/javascript">
+            var wp = $("#wPaint").wPaint({
+                image: $("#canvasImageData"),
+
+<script type="text/javascript">
+            var wp = $("#wPaint").wPaint({
+                image: "$canvasImageData",
+
+
+
+
+but there's no joy yet. Problem is, you have to click the link to get the data into the textbox so maybe
+there should be a get statement in there somewhere?
+
+get.$canvasImageData
+
+
+also, that data should be updated in realtime ideally.
+
+
+
+drag drag drag drag drag drag drag drag drag drag drag drag drag drag drag drag drag 
+
+need the div to remember position and stay wherever it's left.
+
+rightclickrightclickrightclickrightclickrightclickrightclickrightclickrightclickright
+
+the div opens up in a space on the page before its used, testing new context menu's now.
+
+rightclickrightclickrightclickrightclickrightclickrightclickrightclickrightclickright
